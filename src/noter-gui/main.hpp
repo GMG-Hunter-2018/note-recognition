@@ -1,8 +1,13 @@
 #pragma once
 
 #include "ui_hello.h"
-#include <memory>
+#include "noter-sound/sound.hpp"
+#include "noter/hello.hpp"
 
+#include <memory>
+#include <vector>
+
+#include <portaudio.h>
 #include <QDialog>
 
 class AudioWidget;
@@ -21,6 +26,7 @@ private:
     std::unique_ptr<Ui::HelloWindow> m_ui;
 	bool m_triggered = false;
 	AudioWidget* aw;
+
 };
 
 
@@ -28,13 +34,27 @@ class AudioWidget : public QWidget {
     Q_OBJECT
 
 public:
-    AudioWidget(QMainWindow* parent, QComboBox* audio_list);
-/*
+    AudioWidget(QMainWindow* parent,
+                QComboBox* audio_list,
+                QPushButton* init_trigger,
+                QPushButton* populate_trigger);
+
 public slots:
     void paInitTrigger();
     void paPopulateTrigger();
-*/
+
 private:
+
     QComboBox* m_audio_list;
     void populateAudioList();
+
+    QPushButton* m_init_trigger;
+    QPushButton* m_populate_trigger;
+
+
+    bool m_init_triggered = false;
+    bool m_populate_triggered = false;
+
+    AudioInitialize init;
+    std::vector<PaDeviceInfo const*> m_device_list;
 };

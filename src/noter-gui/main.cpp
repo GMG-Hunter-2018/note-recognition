@@ -2,7 +2,11 @@
 #include "noter/hello.hpp"
 
 #include "main.hpp"
+
 #include <iostream>
+#include <portaudio.h>
+#include <vector>
+
 
 NRWindow::NRWindow(QMainWindow* parent):
     QMainWindow(parent),
@@ -10,17 +14,20 @@ NRWindow::NRWindow(QMainWindow* parent):
 {
 	m_ui->setupUi(this);
 
-	aw = new AudioWidget(this, m_ui->audioListQ);
+
+
+	aw = new AudioWidget(this,
+						 m_ui->audioListQ,
+						 m_ui->paInitTrigger,
+						 m_ui->paPopulateTrigger);
 
 	connect(m_ui->trigger, &QPushButton::pressed, this, &NRWindow::trigger);
 
 }
 
 void NRWindow::trigger() {
-    AudioInitialize init;
-    std::cerr << "Has Pa initialized? " << init.initPA() << '\n';
 
-    AudioStream soundStream;
+    //AudioStream soundStream;
 
 
 	if (!m_triggered) {
@@ -35,16 +42,53 @@ void NRWindow::trigger() {
 }
 
 
-AudioWidget::AudioWidget(QMainWindow* parent, QComboBox* audio_list):
+AudioWidget::AudioWidget(QMainWindow* parent,
+						 QComboBox* audio_list,
+						 QPushButton* init_trigger,
+						 QPushButton* populate_trigger):
     QWidget(parent),
-	m_audio_list(audio_list)
+	m_audio_list(audio_list),
+	m_init_trigger(init_trigger),
+	m_populate_trigger(populate_trigger)
 {
-    populateAudioList();
+    connect(m_init_trigger, &QPushButton::clicked, this, &AudioWidget::paInitTrigger);
+    connect(m_populate_trigger, &QPushButton::clicked, this, &AudioWidget::paPopulateTrigger);
+}
+
+void AudioWidget::paInitTrigger() {
+
+	if(!m_init_triggered){
+
+		std::cerr << "Has Pa initialized? " << init.initPA() << '\n';
+		m_init_triggered = !m_init_triggered;
+	}
+
+	if(m_init_triggered){
+		std::cerr << "Wow you already triggered me\n";
+	}
+}
+
+void AudioWidget::paPopulateTrigger() {
+
+    if(!m_populate_triggered){
+        populateAudioList();
+        m_populate_triggered= !m_populate_triggered;
+    }
+    if(m_populate_triggered){
+        std::cerr << "Wow you already triggered me\n";
+    }
 }
 
 void AudioWidget::populateAudioList(){
 
-    m_audio_list->addItem("Hello Test");
+    int numDevices = Pa_GetDeviceCount();
+    std::cout<<numDevices<<'\n';
+
+    for(int i=0; i<numDevices; i++){
+        std::cout<<"Device "<< numDevices<<'\n';
+    	m_device_list.push_back(Pa_GetDeviceInfo(i));
+    	m_audio_list->addItem(m_device_list[i]->name);
+    }
 
 }
 
