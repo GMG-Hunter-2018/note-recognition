@@ -74,7 +74,7 @@ else()
 endif()
 
 # Libraries
-add_subdirectory(lib)
+add_subdirectory(libs)
 
 # Executable Source
 add_subdirectory(src)
