@@ -4,13 +4,19 @@
 #include "main.hpp"
 #include <iostream>
 
-HelloWidget::HelloWidget(QMainWindow* parent): QMainWindow(parent), m_ui(std::make_unique<Ui::HelloWindow>()) {
+NRWindow::NRWindow(QMainWindow* parent):
+    QMainWindow(parent),
+    m_ui(std::make_unique<Ui::HelloWindow>())
+{
 	m_ui->setupUi(this);
 
-	connect(m_ui->trigger, &QPushButton::pressed, this, &HelloWidget::trigger);
+	aw = new AudioWidget(this, m_ui->audioListQ);
+
+	connect(m_ui->trigger, &QPushButton::pressed, this, &NRWindow::trigger);
+
 }
 
-void HelloWidget::trigger() {
+void NRWindow::trigger() {
     AudioInitialize init;
     std::cerr << "Has Pa initialized? " << init.initPA() << '\n';
 
@@ -19,18 +25,36 @@ void HelloWidget::trigger() {
 
 	if (!m_triggered) {
 		m_ui->output->setText(QString::fromStdString(hello()));
-		soundStream.startStream();
+		//soundStream.startStream();
 	}
 	else {
 		m_ui->output->clear();
-		soundStream.stopStream();
+		//soundStream.stopStream();
 	}
 	m_triggered = !m_triggered;
 }
 
+
+AudioWidget::AudioWidget(QMainWindow* parent, QComboBox* audio_list):
+    QWidget(parent),
+	m_audio_list(audio_list)
+{
+    populateAudioList();
+}
+
+void AudioWidget::populateAudioList(){
+
+    m_audio_list->addItem("Hello Test");
+
+}
+
+
 int main(int argc, char** argv) {
 	QApplication app(argc, argv);
-	HelloWidget hw;
-	hw.show();
+	NRWindow nrw;
+	nrw.show();
+
+
+
 	return QApplication::exec();
 }
