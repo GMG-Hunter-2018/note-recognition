@@ -1,2 +1,2 @@
 #!/bin/bash
-`type -p clang-format{-8,-7,-6.0,} | head -n 1` -i `find "@CMAKE_SOURCE_DIR@"/{src,lib} -type f -iname '*.cpp' -or -iname '*.h'`
+`type -p clang-format{-8,-7,-6.0,} | head -n 1` -i `find "@CMAKE_SOURCE_DIR@"/{src,libs} -type f -iname '*.cpp' -or -iname '*.h'`
