@@ -12,6 +12,7 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 # PortAudio Settings
 add_subdirectory(${CMAKE_SOURCE_DIR}/external/portaudio/ EXCLUDE_FROM_ALL)
+find_package(ALSA REQUIRED)
 
 # Linting/Formatting
 set(CMAKE_EXPORT_COMPILE_COMMANDS True CACHE BOOL "Export Compile Commands for Linting" FORCE)
