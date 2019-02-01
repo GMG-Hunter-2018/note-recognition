@@ -40,7 +40,8 @@ AudioStream::AudioStream(){
         std::cerr << "AudioStream open failed \n";
     }
 
-    data.phase = 0.0; //init data
+    data.left_phase = 0.0; //init data
+    data.right_phase = 0.0;
 }
 
 bool AudioStream::openStream(){
@@ -53,6 +54,7 @@ bool AudioStream::openStream(){
                                   256, //Frames per buffer
                                   audioTestCallBack,
                                   &data);
+
 
     if (error != paNoError){
         std::cerr << Pa_GetErrorText(error) << '\n';
@@ -87,7 +89,7 @@ bool AudioStream::stopStream(){
     return true;
 }
 
-static int audioTestCallBack ( void const* inputBuffer,
+int audioTestCallBack ( void const* inputBuffer,
                                void* outputBuffer,
                                unsigned long framesPerBuffer,
                                const PaStreamCallbackTimeInfo* timeInfo,
@@ -97,9 +99,23 @@ static int audioTestCallBack ( void const* inputBuffer,
     auto data = static_cast<paTestData*>(inputData);
     auto output = static_cast<float*>(outputBuffer);
 
-    for(unsigned long i = 0; i < framesPerBuffer; i++){
-        *output++ = data->phase;
+    u_int32_t i;
+
+    for( i=0; i<framesPerBuffer; i++ )
+    {
+        //Taken from paex_saw.c to test out audio functionality
+
+        *output++ = data->left_phase;  /* left */
+        *output++ = data->right_phase;  /* right */
+        /* Generate simple sawtooth phaser that ranges between -1.0 and 1.0. */
+        data->left_phase += 0.01f;
+        /* When signal reaches top, drop back down. */
+        if( data->left_phase >= 1.0f ) data->left_phase -= 2.0f;
+        /* higher pitch so we can distinguish left and right. */
+        data->right_phase += 0.03f;
+        if( data->right_phase >= 1.0f ) data->right_phase -= 2.0f;
     }
+    return 0;
     
     return 0;
 }

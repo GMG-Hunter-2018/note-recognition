@@ -26,9 +26,10 @@ private:
 };
 
 
-typedef struct {
-    float phase;
-} paTestData;
+struct paTestData {
+    float left_phase;
+    float right_phase;
+};
 
 
 class AudioStream {
@@ -40,6 +41,7 @@ public:
     bool startStream();
     bool stopStream();
 
+
 private:
     PaError error;
     PaStream* stream;
@@ -50,7 +52,7 @@ private:
 
 void fft(int x); //Placeholder for fft
 
-static int audioTestCallBack ( void const* inputBuffer,
+int audioTestCallBack ( void const* inputBuffer,
                                void* outputBuffer,
                                unsigned long framesPerBuffer,
                                const PaStreamCallbackTimeInfo* timeInfo,

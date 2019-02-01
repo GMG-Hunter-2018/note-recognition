@@ -19,7 +19,8 @@ NRWindow::NRWindow(QMainWindow* parent):
 	aw = new AudioWidget(this,
 						 m_ui->audioListQ,
 						 m_ui->paInitTrigger,
-						 m_ui->paPopulateTrigger);
+						 m_ui->paPopulateTrigger,
+						 m_ui->paPlay);
 
 	connect(m_ui->trigger, &QPushButton::pressed, this, &NRWindow::trigger);
 
@@ -45,14 +46,17 @@ void NRWindow::trigger() {
 AudioWidget::AudioWidget(QMainWindow* parent,
 						 QComboBox* audio_list,
 						 QPushButton* init_trigger,
-						 QPushButton* populate_trigger):
+						 QPushButton* populate_trigger,
+						 QPushButton* play_trigger):
     QWidget(parent),
 	m_audio_list(audio_list),
 	m_init_trigger(init_trigger),
-	m_populate_trigger(populate_trigger)
+	m_populate_trigger(populate_trigger),
+	m_play_trigger(play_trigger)
 {
     connect(m_init_trigger, &QPushButton::clicked, this, &AudioWidget::paInitTrigger);
     connect(m_populate_trigger, &QPushButton::clicked, this, &AudioWidget::paPopulateTrigger);
+    connect(m_play_trigger, &QPushButton::clicked, this, &AudioWidget::paPlayTrigger);
 }
 
 void AudioWidget::paInitTrigger() {
@@ -79,17 +83,29 @@ void AudioWidget::paPopulateTrigger() {
     }
 }
 
+void AudioWidget::paPlayTrigger() {
+
+    if (!m_play_triggered) {
+		m_stream.openStream();
+		m_stream.startStream();
+    }
+
+    if (m_play_triggered) {
+        std::cout << "Yeah it doesn't stop right now\n";
+    }
+}
+
 void AudioWidget::populateAudioList(){
 
     int numDevices = Pa_GetDeviceCount();
     std::cout<<numDevices<<'\n';
 
     for(int i=0; i<numDevices; i++){
-        std::cout<<"Device "<< numDevices<<'\n';
+
     	m_device_list.push_back(Pa_GetDeviceInfo(i));
     	m_audio_list->addItem(m_device_list[i]->name);
-    }
 
+    }
 }
 
 

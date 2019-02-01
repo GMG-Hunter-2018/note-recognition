@@ -134,6 +134,19 @@
 Devices</string>
            </property>
           </widget>
+          <widget class="QPushButton" name="paPlay">
+           <property name="geometry">
+            <rect>
+             <x>270</x>
+             <y>80</y>
+             <width>88</width>
+             <height>34</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Play Sound</string>
+           </property>
+          </widget>
          </widget>
         </widget>
        </item>
