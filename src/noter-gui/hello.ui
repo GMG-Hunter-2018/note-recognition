@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>243</height>
+    <width>454</width>
+    <height>307</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -111,7 +111,7 @@
            <property name="geometry">
             <rect>
              <x>30</x>
-             <y>80</y>
+             <y>130</y>
              <width>88</width>
              <height>34</height>
             </rect>
@@ -124,7 +124,7 @@
            <property name="geometry">
             <rect>
              <x>140</x>
-             <y>70</y>
+             <y>120</y>
              <width>121</width>
              <height>51</height>
             </rect>
@@ -138,13 +138,23 @@ Devices</string>
            <property name="geometry">
             <rect>
              <x>270</x>
-             <y>80</y>
+             <y>130</y>
              <width>88</width>
              <height>34</height>
             </rect>
            </property>
            <property name="text">
             <string>Play Sound</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="paFrequency">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>80</y>
+             <width>113</width>
+             <height>32</height>
+            </rect>
            </property>
           </widget>
          </widget>
@@ -160,7 +170,7 @@ Devices</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>409</width>
+     <width>454</width>
      <height>30</height>
     </rect>
    </property>

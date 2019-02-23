@@ -1,5 +1,8 @@
 #include "noter-sound/sound.hpp"
+#include <cmath>
 #include <iostream>
+
+constexpr float tau = 2 * M_PIf32;
 
 AudioInitialize::AudioInitialize() {
 	initPA();
@@ -36,16 +39,15 @@ AudioStream::AudioStream() {
 	if (!openStream()) {
 		std::cerr << "AudioStream open failed \n";
 	}
-
-	data.left_phase = 0.0; // init data
-	data.right_phase = 0.0;
 }
 
 bool AudioStream::openStream() {
 	error = Pa_OpenDefaultStream(&stream,
 	                             0, // Input Channels
 	                             2, // Output Channels
-	                             paFloat32, audio_sample_rate,
+	                             //The Following type is "PaFloat32"
+	                             //It is represented as such to avoid old-style cast.
+	                             static_cast<PaSampleFormat>(0x00000001), data.sampleRate,
 	                             256, // Frames per buffer
 	                             audioTestCallBack, &data);
 
@@ -88,23 +90,17 @@ int audioTestCallBack(void const* /*inputBuffer*/,
 	auto data = static_cast<paTestData*>(inputData);
 	auto output = static_cast<float*>(outputBuffer);
 
-	u_int32_t i;
+	float internalFreq = data->intendedFreq / data->sampleRate;
 
-	for (i = 0; i < framesPerBuffer; i++) {
-		// Taken from paex_saw.c to test out audio functionality
+	for (uint32_t i = 0; i < framesPerBuffer; i++) {
+		// Left and Right phase correspond to channel
+		// The fact that output is a float vs double is built in
 
-		*output++ = data->left_phase;  /* left */
-		*output++ = data->right_phase; /* right */
-		/* Generate simple sawtooth phaser that ranges between -1.0 and 1.0. */
-		data->left_phase += 0.01f;
-		/* When signal reaches top, drop back down. */
-		if (data->left_phase >= 1.0f)
-			data->left_phase -= 2.0f;
-		/* higher pitch so we can distinguish left and right. */
-		data->right_phase += 0.03f;
-		if (data->right_phase >= 1.0f)
-			data->right_phase -= 2.0f;
+		*output++ = std::sin(data->left_phase * tau);
+		*output++ = std::sin(data->right_phase * tau);
+		data->left_phase += internalFreq;
+		data->right_phase += internalFreq;
 	}
 
-	return 0;
+	return paContinue;
 }

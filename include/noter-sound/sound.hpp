@@ -2,6 +2,7 @@
 
 #include <portaudio.h>
 #include <memory>
+#include <optional>
 
 /*The purpose of the next few classes is to wrap some of
 the PortAudio functions in slightly more modern c++ 
@@ -27,8 +28,12 @@ private:
 
 
 struct paTestData {
-    float left_phase;
-    float right_phase;
+    float left_phase = 0;
+    float right_phase = 0;
+
+    float intendedFreq = 261.6f; //Default to Mid-C
+
+    const uint32_t sampleRate = 44100;
 };
 
 
@@ -41,13 +46,13 @@ public:
     bool startStream();
     bool stopStream();
 
+    paTestData data;
+
 
 private:
     PaError error;
     PaStream* stream;
-    paTestData data;
 
-    const int audio_sample_rate = 44100;
 };
 
 void fft(int x); //Placeholder for fft
@@ -58,4 +63,4 @@ int audioTestCallBack ( void const* inputBuffer,
                                const PaStreamCallbackTimeInfo* timeInfo,
                                PaStreamCallbackFlags statusFlags,
                                void* inputData );
-//As of right now, this should just spit out a saw wave, a la paex_saw.c example
+//As of now, we've achieved pure frequencies of choice.
