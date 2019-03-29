@@ -109,7 +109,8 @@ void AudioWidget::populateAudioList() {
 
 	for (int i = 0; i < numDevices; i++) {
 		m_device_list.push_back(Pa_GetDeviceInfo(i));
-		m_audio_list->addItem(m_device_list[static_cast<std::vector<PaDeviceInfo const*>::size_type>(i)]->name);
+		m_audio_list->addItem(
+		    m_device_list[static_cast<std::vector<PaDeviceInfo const*>::size_type>(i)]->name);
 	}
 }
 
