@@ -1,8 +1,11 @@
 #pragma once
 
 #include <portaudio.h>
+#include <complex>
 #include <memory>
 #include <optional>
+#include <utility>
+#include <vector>
 
 /*The purpose of the next few classes is to wrap some of
 the PortAudio functions in slightly more modern c++ 
@@ -55,12 +58,17 @@ private:
 
 };
 
-void fft(int x); //Placeholder for fft
-
+//The audio function called every frame, it MUST have this type sig because of PA.
 int audioTestCallBack ( void const* inputBuffer,
                                void* outputBuffer,
                                unsigned long framesPerBuffer,
                                const PaStreamCallbackTimeInfo* timeInfo,
                                PaStreamCallbackFlags statusFlags,
                                void* inputData );
-//As of now, we've achieved pure frequencies of choice.
+
+
+//We should reevaluate using FFT, it ain't the greatest for note detection
+
+std::pair<std::vector<float>,std::vector<float>> evenoddHelper(const std::vector<float> &v, uint64_t); //Splits on every other val
+
+void fft(std::vector<float> audioform, std::vector<std::complex<float>> &out);

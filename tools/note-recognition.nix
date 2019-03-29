@@ -1,10 +1,10 @@
-{ llvmPackages_7, pkgconfig, libpulseaudio, 
-	alsaLib, cmake, qt5 }:
+{ llvmPackages_8, pkgconfig, libpulseaudio, 
+	alsaLib, cmake, qt5, gnumake }:
 
-llvmPackages_7.stdenv.mkDerivation rec {
+llvmPackages_8.stdenv.mkDerivation rec {
 
     name = "note-recognition-TEST";
 
-    nativeBuildInputs = [ cmake qt5.full alsaLib ];
+    nativeBuildInputs = [ cmake qt5.full alsaLib gnumake ];
     src = ./..;
 }

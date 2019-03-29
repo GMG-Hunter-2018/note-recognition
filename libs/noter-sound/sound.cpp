@@ -1,6 +1,9 @@
 #include "noter-sound/sound.hpp"
 #include <cmath>
+#include <complex>
 #include <iostream>
+#include <utility>
+#include <vector>
 
 constexpr float tau = 2 * M_PIf32;
 
@@ -94,7 +97,7 @@ int audioTestCallBack(void const* /*inputBuffer*/,
 
 	for (uint32_t i = 0; i < framesPerBuffer; i++) {
 		// Left and Right phase correspond to channel
-		// The fact that output is a float vs double is built in
+		// The fact that output is a float vs double is built in to PA
 
 		*output++ = std::sin(data->left_phase * tau);
 		*output++ = std::sin(data->right_phase * tau);
@@ -103,4 +106,43 @@ int audioTestCallBack(void const* /*inputBuffer*/,
 	}
 
 	return paContinue;
+}
+
+//FFT, it recurses because what a sin
+//I don't really account for odd sizes so if you could avoid
+//that that'd be great
+
+std::pair<std::vector<float>,std::vector<float>> evenoddHelper(const std::vector<float> &v, uint64_t inSize){
+	//I treat size as a func input because it was already calculated in FFT
+
+	std::vector<float> outeven(inSize/2), outodd(inSize/2);
+
+	for(uint64_t i = 0; i < inSize/2; i++){
+		outeven[i] = v[i*2];
+		outodd [i] = v[(i*2)+1];
+	}
+
+	return make_pair(outeven,outodd);
+}
+
+void fft(std::vector<float> audioform, std::vector<std::complex<float>> &out){
+
+	uint64_t inputCount = audioform.size();
+
+	if (inputCount == 1){
+		out[0] = std::complex<float>(audioform[0],0);
+		return;
+	}
+
+	//Structured bindings are cool.
+	auto [even,odd] = evenoddHelper(audioform, inputCount);
+
+	fft(even, out);
+	fft(odd,  out);
+
+	for(uint64_t i = 0; i < inputCount/2; i++){
+		std::complex<float> x = out[i+inputCount/2]/std::polar(1.0f, -1 * tau * i/inputCount);
+		out[i] += x;
+		out[i+inputCount/2] = out[i] - x;
+	}
 }
